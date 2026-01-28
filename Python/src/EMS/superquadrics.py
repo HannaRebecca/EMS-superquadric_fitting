@@ -2,6 +2,7 @@ import numpy as np
 from scipy.spatial.transform import Rotation as R
 import EMS.utilities
 
+
 class superquadric(object):
     # a class object specifies a superquadric primitive with a general pose.
     # attributes:
@@ -27,23 +28,23 @@ class superquadric(object):
     @property
     def scale(self):
         return self._scale
-    
+
     @scale.setter
     def scale(self, val):
         self._scale = np.array(val, dtype=float)
 
     @property
     def euler(self):
-        return self._r.as_euler('ZYX')
+        return self._r.as_euler("ZYX")
 
     @euler.setter
     def euler(self, val):
-        self._r = R.from_euler('ZYX', val)
+        self._r = R.from_euler("ZYX", val)
 
     @property
     def translation(self):
         return self._translation
-    
+
     @translation.setter
     def translation(self, val):
         self._translation = np.array(val, dtype=float)
@@ -64,8 +65,10 @@ class superquadric(object):
     def quat(self, val):
         self._r = R.from_quat(val)
 
-    def showSuperquadric(self, threshold = 1e-2, num_limit = 10000, arclength = 0.02):
-        EMS.utilities.showSuperquadrics(self, threshold = threshold, num_limit = num_limit, arclength = arclength)
+    def showSuperquadric(self, threshold=1e-2, num_limit=10000, arclength=0.02):
+        EMS.utilities.showSuperquadrics(
+            self, threshold=threshold, num_limit=num_limit, arclength=arclength
+        )
 
 
 class rotations(object):
@@ -90,8 +93,8 @@ class rotations(object):
 
     @property
     def euler(self):
-        return self._r.as_euler('ZYX')
+        return self._r.as_euler("ZYX")
 
     @euler.setter
     def euler(self, val):
-        self._r = R.from_euler('ZYX', val)
+        self._r = R.from_euler("ZYX", val)

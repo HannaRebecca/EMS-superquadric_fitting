@@ -4,24 +4,25 @@ from EMS.utilities import read_ply, showPoints
 from mayavi import mlab
 from sklearn.cluster import DBSCAN
 
+
 def hierarchical_ems(
     point,
-    OutlierRatio=0.9,           # prior outlier probability [0, 1) (default: 0.1)
-    MaxIterationEM=20,           # maximum number of EM iterations (default: 20)
-    ToleranceEM=1e-3,            # absolute tolerance of EM (default: 1e-3)
-    RelativeToleranceEM=2e-1,    # relative tolerance of EM (default: 1e-1)
-    MaxOptiIterations=2,         # maximum number of optimization iterations per M (default: 2)
-    Sigma=0.3,                   # initial sigma^2 (default: 0 - auto generate)
-    MaxiSwitch=2,                # maximum number of switches allowed (default: 2)
-    AdaptiveUpperBound=True,    # Introduce adaptive upper bound to restrict the volume of SQ (default: false)
-    Rescale=False,                # normalize the input point cloud (default: true)
-    MaxLayer=5,                  # maximum depth
-    Eps=1.7,                    # IMPORTANT: varies based on the size of the input pointcoud (DBScan parameter)
-    MinPoints=60,               # DBScan parameter required minimum points
+    OutlierRatio=0.9,  # prior outlier probability [0, 1) (default: 0.1)
+    MaxIterationEM=20,  # maximum number of EM iterations (default: 20)
+    ToleranceEM=1e-3,  # absolute tolerance of EM (default: 1e-3)
+    RelativeToleranceEM=2e-1,  # relative tolerance of EM (default: 1e-1)
+    MaxOptiIterations=2,  # maximum number of optimization iterations per M (default: 2)
+    Sigma=0.3,  # initial sigma^2 (default: 0 - auto generate)
+    MaxiSwitch=2,  # maximum number of switches allowed (default: 2)
+    AdaptiveUpperBound=True,  # Introduce adaptive upper bound to restrict the volume of SQ (default: false)
+    Rescale=False,  # normalize the input point cloud (default: true)
+    MaxLayer=5,  # maximum depth
+    Eps=1.7,  # IMPORTANT: varies based on the size of the input pointcoud (DBScan parameter)
+    MinPoints=60,  # DBScan parameter required minimum points
 ):
 
-    point_seg = {key: [] for key in list(range(0, MaxLayer+1))}
-    point_outlier = {key: [] for key in list(range(0, MaxLayer+1))}
+    point_seg = {key: [] for key in list(range(0, MaxLayer + 1))}
+    point_outlier = {key: [] for key in list(range(0, MaxLayer + 1))}
     point_seg[0] = [point]
     list_quadrics = []
     quadric_count = 1
@@ -58,8 +59,10 @@ def hierarchical_ems(
     return point_seg, point_outlier, list_quadrics
 
 
-# Load pointcloud 
-point_cloud = read_ply("/home/stanz/EMS_superquadric/EMS-superquadric_fitting/MATLAB/example_scripts/data/multi_superquadrics/dog.ply")
+# Load pointcloud
+point_cloud = read_ply(
+    "/home/stanz/EMS_superquadric/EMS-superquadric_fitting/MATLAB/example_scripts/data/multi_superquadrics/dog.ply"
+)
 point_seg, point_outlier, list_quadrics = hierarchical_ems(point_cloud)
 
 # -----------    Plot multiquadric figure --------------
