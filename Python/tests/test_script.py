@@ -1,6 +1,7 @@
-from mayavi import mlab
+# from mayavi import mlab
 import argparse
 import sys
+import viser
 import numpy as np
 
 from EMS.utilities import read_ply, showPoints
@@ -93,10 +94,32 @@ def main(argv):
         print("----------------------------------------------------")
 
     if args.visualize is True:
-        fig = mlab.figure(size=(400, 400), bgcolor=(1, 1, 1))
-        sq_recovered.showSuperquadric(arclength=args.arcLength)
-        showPoints(point, scale_factor=args.pointSize)
-        mlab.show()
+        server = viser.ViserServer()
+        original_pointcloud = point
+
+        colors_noise = (original_pointcloud - original_pointcloud.min()) / (
+            original_pointcloud.max() - original_pointcloud.min()
+        )
+        pc_handle = server.scene.add_point_cloud(
+            name="original_pointcloud",
+            points=original_pointcloud,
+            colors=colors_noise,
+            point_size=0.02,
+        )
+        faces, verices = sq_recovered.showSuperquadric(arclength=args.arcLength)
+
+        pc_handle = server.scene.add_mesh_simple(
+            "superquadric_mesh",
+            vertices=verices,
+            faces=faces,
+        )
+
+        input("Press Enter to exit...")
+
+        # fig = mlab.figure(size=(400, 400), bgcolor=(1, 1, 1))
+        # sq_recovered.showSuperquadric(arclength=args.arcLength)
+        # showPoints(point, scale_factor=args.pointSize)
+        # mlab.show()
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from mayavi import mlab
+# from mayavi import mlab
 import numpy as np
 import plyfile
 
@@ -33,8 +33,29 @@ def showSuperquadrics(x, threshold=1e-2, num_limit=10000, arclength=0.02):
             y_mesh[m, n] = point_temp[1]
             z_mesh[m, n] = point_temp[2]
 
-    mlab.view(azimuth=0.0, elevation=0.0, distance=2)
-    mlab.mesh(x_mesh, y_mesh, z_mesh, color=(0, 0, 1), opacity=0.8)
+    shape_omeg = point_omega.shape[1]
+    shape_eta = point_eta.shape[1]
+
+    vertices = np.stack([x_mesh, y_mesh, z_mesh], axis=-1).reshape(-1, 3)
+
+    faces = []
+
+    for i in range(shape_omeg - 1):
+        for j in range(shape_eta - 1):
+            v00 = i * shape_eta + j
+            v01 = i * shape_eta + (j + 1)
+            v10 = (i + 1) * shape_eta + j
+            v11 = (i + 1) * shape_eta + (j + 1)
+
+            faces.append([v00, v10, v01])
+            faces.append([v10, v11, v01])
+
+    faces = np.asarray(faces)
+
+    return faces, vertices
+
+    # mlab.view(azimuth=0.0, elevation=0.0, distance=2)
+    # mlab.mesh(x_mesh, y_mesh, z_mesh, color=(0, 0, 1), opacity=0.8)
 
 
 def uniformSampledSuperellipse(
@@ -142,12 +163,6 @@ def read_ply(path_to_file):
 
 
 def showPoints(point, scale_factor=0.1):
-
-    mlab.view(azimuth=0.0, elevation=0.0, distance=2)
-    mlab.points3d(
-        point[:, 0],
-        point[:, 1],
-        point[:, 2],
-        scale_factor=scale_factor,
-        color=(1, 0, 0),
-    )
+    pass
+    # mlab.view(azimuth=0.0, elevation=0.0, distance=2)
+    # mlab.points3d(point[:, 0], point[:, 1], point[:, 2], scale_factor=scale_factor, color=(1, 0, 0))

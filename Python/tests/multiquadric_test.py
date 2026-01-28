@@ -1,8 +1,16 @@
 import numpy as np
 from EMS.EMS_recovery import EMS_recovery
 from EMS.utilities import read_ply, showPoints
-from mayavi import mlab
+import viser
+import logging
+
+# from mayavi import mlab
 from sklearn.cluster import DBSCAN
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 
 def hierarchical_ems(
@@ -28,7 +36,8 @@ def hierarchical_ems(
     quadric_count = 1
     for h in range(MaxLayer):
         for c in range(len(point_seg[h])):
-            print(f"Counting number of generated quadrics: {quadric_count}")
+            logger.debug("Counting number of generated quadrics: %d", quadric_count)
+            # print(f"Counting number of generated quadrics: {quadric_count}")
             quadric_count += 1
             x_raw, p_raw = EMS_recovery(
                 point_seg[h][c],
@@ -56,18 +65,47 @@ def hierarchical_ems(
                 point_outlier[h].append(outlier[clustering.labels_ == -1])
             else:
                 point_outlier[h].append(outlier)
+    logger.info("Generated %d quadrics", quadric_count)
     return point_seg, point_outlier, list_quadrics
 
 
-# Load pointcloud
-point_cloud = read_ply(
-    "/home/stanz/EMS_superquadric/EMS-superquadric_fitting/MATLAB/example_scripts/data/multi_superquadrics/dog.ply"
-)
-point_seg, point_outlier, list_quadrics = hierarchical_ems(point_cloud)
+# # Load pointcloud
+# # point_cloud = read_ply("path")
+# point_cloud = np.load(
+#     "path"
+# )["points"]
+# point_seg, point_outlier, list_quadrics = hierarchical_ems(point_cloud)
 
-# -----------    Plot multiquadric figure --------------
-fig = mlab.figure(size=(400, 400), bgcolor=(1, 1, 1))
-for quadric in list_quadrics:
-    quadric.showSuperquadric(arclength=0.2)
-showPoints(point_cloud, scale_factor=0.001)
-mlab.show()
+# # -----------    Plot multiquadric figure --------------
+# server = viser.ViserServer()
+
+
+# original_pointcloud = point_cloud
+
+# colors_noise = (original_pointcloud - original_pointcloud.min()) / (
+#     original_pointcloud.max() - original_pointcloud.min()
+# )
+# pc_handle = server.scene.add_point_cloud(
+#     name="original_pointcloud",
+#     points=original_pointcloud,
+#     colors=colors_noise,
+#     point_size=0.02,
+# )
+# c = 0
+# for quadric in list_quadrics:
+#     faces, verices = quadric.showSuperquadric(arclength=0.2)
+#     server.scene.add_mesh_simple(
+#         f"superquadric_mesh_{c}",
+#         vertices=verices,
+#         faces=faces,
+#     )
+#     c += 1
+
+# input("Press Enter to exit...")
+
+
+# fig = mlab.figure(size=(400, 400), bgcolor=(1, 1, 1))
+# for quadric in list_quadrics:
+#     quadric.showSuperquadric(arclength=0.2)
+# showPoints(point_cloud, scale_factor=0.001)
+# mlab.show()
